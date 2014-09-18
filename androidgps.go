@@ -8,7 +8,7 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/elazarl/go-bindata-assetfs"
+	. "github.com/huaruiwu/android-gps/data"
 )
 
 type position struct {
@@ -22,7 +22,6 @@ func (pos position) String() string {
 
 func main() {
 	http.HandleFunc("/", handler)
-	http.HandleFunc("/static/", staticHandler)
 	http.HandleFunc("/position", positionHandler)
 	err := http.ListenAndServe(":9000", nil)
 	if err != nil {
@@ -40,11 +39,6 @@ func positionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(pos)
 	go sendPosition(pos)
-}
-
-func staticHandler(w http.ResponseWriter, r *http.Request) {
-	// http.ServeFile(w, r, r.URL.Path[1:])
-	http.FileServer(&assetfs.AssetFS{Asset, AssetDir, "static"})
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
