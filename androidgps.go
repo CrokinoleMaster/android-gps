@@ -11,6 +11,8 @@ import (
 	. "github.com/huaruiwu/android-gps/data"
 )
 
+var _androidPort = ":5554"
+
 type position struct {
 	Lat string
 	Lng string
@@ -21,8 +23,12 @@ func (pos position) String() string {
 }
 
 func main() {
+	if len(os.Args) > 1 {
+		_androidPort = ":" + os.Args[1]
+	}
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/position", positionHandler)
+	fmt.Println("listening on port 9000")
 	err := http.ListenAndServe(":9000", nil)
 	if err != nil {
 		fmt.Println(err)
@@ -59,7 +65,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendPosition(pos position) {
-	conn, err := net.Dial("tcp", ":5554")
+	conn, err := net.Dial("tcp", _androidPort)
 	if err != nil {
 		fmt.Println(err)
 		return
